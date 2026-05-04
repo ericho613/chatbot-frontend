@@ -1,0 +1,52 @@
+.dropzone {
+  border: 2px dashed #b9c8d8;
+  border-radius: 1rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  background: #f9fbfd;
+  transition: all 0.15s ease;
+
+  &.dragging,
+  &:focus {
+    border-color: #4c8bf5;
+    background: #eef5ff;
+    outline: none;
+  }
+}
+
+.selected-files {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #e0e6ed;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #fff;
+}
+
+.file-name {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+@media (max-width: 575.98px) {
+  .dropzone {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .file-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .file-item .btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,23 @@
+<div class="chat-input-panel">
+  <div class="chat-input-shell">
+    <textarea
+      #textarea
+      id="chatMessage"
+      class="form-control chat-textarea"
+      rows="1"
+      [(ngModel)]="text"
+      (input)="onInput()"
+      (keydown)="onKeydown($event)"
+      placeholder="Ask a question or enter a response."
+      aria-label="Chat message input"></textarea>
+
+    <button
+      type="button"
+      class="send-icon-btn"
+      (click)="submit()"
+      [disabled]="!text.trim()"
+      aria-label="Send message">
+      <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<aside
+  class="sidebar"
+  [class.collapsed]="!expanded && !mobileMode"
+  [class.mobile-mode]="mobileMode"
+  aria-label="Application features sidebar">
+
+  <div class="sidebar-header" *ngIf="!mobileMode">
+    <button
+      type="button"
+      class="btn btn-link sidebar-toggle"
+      [title]="expanded ? 'Hide tools' : 'Show tools'"
+      (click)="toggleSidebar()"
+      [attr.aria-expanded]="expanded"
+      [attr.aria-label]="expanded ? 'Collapse feature sidebar' : 'Expand feature sidebar'">
+      <i
+        class="fa-solid"
+        [class.fa-angles-right]="!expanded"
+        [class.fa-angles-left]="expanded"
+        aria-hidden="true"></i>
+    </button>
+
+    <span class="sidebar-title" *ngIf="expanded">Tools</span>
+  </div>
+
+  <nav class="feature-nav" aria-label="Feature navigation">
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openRag()" aria-label="Open RAG Query dialog">
+      <i class="fa-solid fa-database feature-item-icon" aria-hidden="true"></i>
+      <span class="feature-label">RAG Query</span>
+    </button>
+
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openSummary()" aria-label="Open Summary Generator dialog">
+      <i class="fa-solid fa-file-lines feature-item-icon" aria-hidden="true"></i>
+      <span class="feature-label">Summary Generator</span>
+    </button>
+
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openCitation()" aria-label="Open Citation Generator dialog">
+      <i class="fa-solid fa-quote-left feature-item-icon" aria-hidden="true"></i>
+      <span class="feature-label">Citation Generator</span>
+    </button>
+
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openUpload()" aria-label="Open Upload to Vector Database dialog">
+      <i class="fa-solid fa-cloud-arrow-up feature-item-icon" aria-hidden="true"></i>
+      <span class="feature-label">Upload to Vector Database</span>
+    </button>
+
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openJwt()" aria-label="Open JWT Generator dialog">
+      <i class="fa-solid fa-key feature-item-icon" aria-hidden="true"></i>
+      <span class="feature-label">JWT Generator</span>
+    </button>
+
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openSettings()" aria-label="Open Settings dialog">
+      <i class="fa-solid fa-gear feature-item-icon" aria-hidden="true"></i>
+      <span class="feature-label">Settings</span>
+    </button>
+  </nav>
+</aside>

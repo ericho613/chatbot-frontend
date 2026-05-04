@@ -1,0 +1,58 @@
+<div class="chatbot-layout">
+  <div
+    class="sidebar-backdrop"
+    *ngIf="mobileSidebarOpen"
+    (click)="closeMobileSidebar()"
+    aria-hidden="true">
+  </div>
+
+  <div class="desktop-sidebar">
+    <app-feature-sidebar></app-feature-sidebar>
+  </div>
+
+  <div class="mobile-sidebar" [class.open]="mobileSidebarOpen" aria-label="Mobile feature sidebar">
+    <div class="mobile-sidebar-header">
+      <h2 class="h6 mb-0">Tools</h2>
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        (click)="closeMobileSidebar()"
+        aria-label="Close tools menu">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    <app-feature-sidebar [mobileMode]="true"></app-feature-sidebar>
+  </div>
+
+  <main class="chatbot-main">
+    <header class="chatbot-header">
+      <div class="chatbot-header-row">
+        <button
+          type="button"
+          class="btn btn-outline-primary mobile-tools-button"
+          (click)="openMobileSidebar()"
+          title="Open tools menu"
+          aria-label="Open tools menu">
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          <span class="ms-2">Tools</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="chatbot-content">
+      <div class="chat-history-region">
+        <app-chat-history
+          [messages]="messages"
+          [clearRequested]="clearChat.bind(this)"
+          [copyRequested]="copyChatHistory.bind(this)">
+        </app-chat-history>
+      </div>
+
+      <div class="chat-input-region">
+        <app-chat-input (sendMessage)="onSendMessage($event)"></app-chat-input>
+      </div>
+    </section>
+  </main>
+
+  <app-toast-host></app-toast-host>
+</div>

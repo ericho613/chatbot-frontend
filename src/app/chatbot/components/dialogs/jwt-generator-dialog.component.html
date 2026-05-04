@@ -1,0 +1,37 @@
+<div class="modal-header app-modal-header">
+  <h2 class="modal-title h5" id="jwtDialogTitle">JSON web token (JWT) generator</h2>
+  <button
+    type="button"
+    class="dialog-close-btn"
+    aria-label="Close JWT dialog"
+    (click)="activeModal.dismiss()">
+    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+  </button>
+</div>
+
+<div class="modal-body app-modal-body" aria-labelledby="jwtDialogTitle">
+  <p class="text-muted mb-4">
+    Enter the JWT secret. A JWT will be generated in the browser, stored in the
+    <code>chatbotAccessToken</code> cookie, set to expire after 30 minutes, and automatically refreshed every 25 minutes.
+  </p>
+
+  <div class="form-group dialog-field">
+    <label for="jwtSecret" class="mb-2">JWT secret</label>
+    <textarea
+      id="jwtSecret"
+      class="form-control"
+      rows="5"
+      [(ngModel)]="secret"
+      aria-describedby="jwtHelp"></textarea>
+    <small id="jwtHelp" class="form-text text-muted mt-2">
+      This secret must match the backend JWT secret if backend JWT authentication is enabled.
+    </small>
+  </div>
+</div>
+
+<div class="modal-footer app-modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="generate()" [disabled]="!secret.trim() || loading">
+    Generate JWT
+  </button>
+</div>

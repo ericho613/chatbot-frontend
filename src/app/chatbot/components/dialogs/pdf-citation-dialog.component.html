@@ -1,0 +1,43 @@
+<div class="modal-header app-modal-header">
+  <h2 class="modal-title h5" id="citationDialogTitle">Citation Generator</h2>
+  <button
+    type="button"
+    class="dialog-close-btn"
+    aria-label="Close citation dialog"
+    (click)="activeModal.dismiss()">
+    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+  </button>
+</div>
+
+<div class="modal-body app-modal-body" aria-labelledby="citationDialogTitle">
+  <p class="text-muted mb-4">
+    Select a PDF file and choose the desired citation style. The generated citation will be added to the chat history.
+  </p>
+
+  <div class="form-group dialog-field">
+    <label for="citationStyle" class="mb-2">Citation style</label>
+    <select id="citationStyle" class="form-control" [(ngModel)]="citationStyle">
+      <option value="APA">APA</option>
+      <option value="MLA">MLA</option>
+    </select>
+  </div>
+
+  <div class="dialog-field">
+    <app-file-dropzone
+      [multiple]="false"
+      [selectedFiles]="selectedFiles"
+      (filesSelected)="onFilesSelected($event)"
+      (fileRemoved)="removeFile($event)">
+    </app-file-dropzone>
+  </div>
+
+  <div *ngIf="loading" class="text-center mt-4" role="status" aria-live="polite">
+    <div class="spinner-border text-primary" aria-hidden="true"></div>
+    <div class="mt-2">Processing request...</div>
+  </div>
+</div>
+
+<div class="modal-footer app-modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!selectedFiles.length || loading">Submit</button>
+</div>

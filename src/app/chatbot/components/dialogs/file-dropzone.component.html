@@ -1,0 +1,38 @@
+<div
+  class="dropzone"
+  [class.dragging]="isDragging"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+  role="button"
+  tabindex="0"
+  aria-label="Upload PDF files by browsing or dragging and dropping">
+  <p class="mb-2"><strong>Drag and drop PDF file{{ multiple ? 's' : '' }}</strong> here</p>
+  <p class="text-muted mb-3">or browse your computer</p>
+
+  <label class="btn btn-outline-primary mb-0">
+    Browse files
+    <input
+      type="file"
+      accept=".pdf,application/pdf"
+      [attr.multiple]="multiple ? '' : null"
+      (change)="onFileInputChange($event)"
+      hidden />
+  </label>
+</div>
+
+<div *ngIf="selectedFiles.length > 0" class="selected-files mt-3" aria-live="polite">
+  <div *ngFor="let item of selectedFiles; let i = index" class="file-item">
+    <div>
+      <div class="file-name">{{ item.name }}</div>
+      <div class="file-size text-muted">{{ formatSize(item.size) }}</div>
+    </div>
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-danger"
+      (click)="remove(i)"
+      [attr.aria-label]="'Remove file ' + item.name">
+      Remove
+    </button>
+  </div>
+</div>

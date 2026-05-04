@@ -1,0 +1,35 @@
+<div class="modal-header app-modal-header">
+  <h2 class="modal-title h5" id="uploadDialogTitle">Upload to Vector Database</h2>
+  <button
+    type="button"
+    class="dialog-close-btn"
+    aria-label="Close upload dialog"
+    (click)="activeModal.dismiss()">
+    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+  </button>
+</div>
+
+<div class="modal-body app-modal-body" aria-labelledby="uploadDialogTitle">
+  <p class="text-muted mb-4">
+    Select one or more PDF files to upload and index in the vector database. A status message will be added to the chat history.
+  </p>
+
+  <div class="dialog-field">
+    <app-file-dropzone
+      [multiple]="true"
+      [selectedFiles]="selectedFiles"
+      (filesSelected)="onFilesSelected($event)"
+      (fileRemoved)="removeFile($event)">
+    </app-file-dropzone>
+  </div>
+
+  <div *ngIf="loading" class="text-center mt-4" role="status" aria-live="polite">
+    <div class="spinner-border text-primary" aria-hidden="true"></div>
+    <div class="mt-2">Processing request...</div>
+  </div>
+</div>
+
+<div class="modal-footer app-modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!selectedFiles.length || loading">Submit</button>
+</div>

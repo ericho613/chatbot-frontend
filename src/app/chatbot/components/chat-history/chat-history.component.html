@@ -1,0 +1,65 @@
+<section
+  class="chat-panel"
+  aria-label="Chat conversation history"
+  (mouseenter)="hovered = true"
+  (mouseleave)="hovered = false">
+
+  <div class="chat-panel-controls right-control" [class.visible]="hovered">
+    <button
+      type="button"
+      class="btn btn-sm btn-light icon-btn"
+      (click)="copyRequested()"
+      aria-label="Copy chat history"
+      title="Copy chat history">
+      <i class="fa-regular fa-copy" aria-hidden="true"></i>
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-sm btn-light icon-btn"
+      (click)="clearRequested()"
+      aria-label="Clear chat history"
+      title="Clear chat history">
+      <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div #scrollContainer class="chat-scroll" (scroll)="onScroll()">
+    <div
+      *ngFor="let message of messages; trackBy: trackById"
+      class="message-row"
+      [class.user]="message.role === 'user'"
+      [class.assistant]="message.role === 'assistant'">
+
+      <article
+        class="message-bubble"
+        [attr.aria-label]="message.role === 'user' ? 'User message' : 'Assistant message'">
+        <div class="message-header">
+          <div class="message-role-wrap">
+            <i
+              class="message-avatar fa-solid"
+              [class.fa-user]="message.role === 'user'"
+              [class.fa-robot]="message.role === 'assistant'"
+              aria-hidden="true"></i>
+            <div class="message-role">
+              {{ message.role === 'user' ? 'You' : 'Assistant' }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="message-content markdown-content"
+          [innerHTML]="renderMarkdown(message.content)">
+        </div>
+
+        <div
+          *ngIf="message.role === 'assistant' && message.pending"
+          class="typing-indicator"
+          aria-label="Assistant is typing"
+          role="status">
+          <span></span><span></span><span></span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

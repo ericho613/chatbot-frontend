@@ -1,0 +1,29 @@
+<div class="toast-host" aria-live="polite" aria-atomic="true">
+  <ngb-toast
+    *ngFor="let toast of (toasts$ | async)"
+    class="app-toast"
+    [class.toast-success]="toast.type === 'success'"
+    [class.toast-danger]="toast.type === 'danger'"
+    [class.toast-info]="toast.type === 'info'"
+    [autohide]="true"
+    [delay]="toast.delay || 4000"
+    (hidden)="remove(toast.id)">
+
+    <ng-template ngbToastHeader>
+      <div class="toast-header-content">
+        <strong class="toast-title">{{ toast.title }}</strong>
+        <!-- <button
+          type="button"
+          class="toast-close-btn"
+          aria-label="Close notification"
+          (click)="remove(toast.id)">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button> -->
+      </div>
+    </ng-template>
+
+    <div class="toast-body-content">
+      {{ toast.body }}
+    </div>
+  </ngb-toast>
+</div>
