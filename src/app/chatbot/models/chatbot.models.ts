@@ -6,6 +6,7 @@ export interface ChatMessage {
   content: string;
   timestamp: number;
   pending?: boolean;
+  isDefaultGreeting?: boolean;
 }
 
 export interface GenerationConfig {

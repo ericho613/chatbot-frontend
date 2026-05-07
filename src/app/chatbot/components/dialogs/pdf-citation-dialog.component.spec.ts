@@ -7,6 +7,15 @@ import { FileDropzoneComponent } from './file-dropzone.component';
 import { ApiService } from '../../services/api.service';
 import { ChatStateService } from '../../services/chat-state.service';
 import { NotificationService } from '../../services/notification.service';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('PdfCitationDialogComponent', () => {
   let component: PdfCitationDialogComponent;
@@ -38,13 +47,14 @@ describe('PdfCitationDialogComponent', () => {
     });
 
     await TestBed.configureTestingModule({
-      declarations: [PdfCitationDialogComponent, FileDropzoneComponent],
+      declarations: [PdfCitationDialogComponent, FileDropzoneComponent, MockTranslatePipe],
       imports: [FormsModule],
       providers: [
         { provide: ApiService, useValue: apiSpy },
         { provide: ChatStateService, useValue: chatStateSpy },
         { provide: NotificationService, useValue: notificationSpy },
-        { provide: NgbActiveModal, useValue: activeModalSpy }
+        { provide: NgbActiveModal, useValue: activeModalSpy },
+        LanguageService
       ]
     }).compileComponents();
 
@@ -77,12 +87,12 @@ describe('PdfCitationDialogComponent', () => {
     await component.submit();
 
     expect(chatStateSpy.updateMessage).toHaveBeenCalledWith('assistant-1', {
-      content: 'Sorry, an error occurred while generating the citation.',
+      content: component.languageService.t('error.citation'),
       pending: false
     });
 
     expect(notificationSpy.error).toHaveBeenCalledWith(
-      'Citation generation failed',
+      component.languageService.t('notification.citationFailedTitle'),
       'Citation failed'
     );
   });

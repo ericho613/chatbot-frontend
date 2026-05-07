@@ -5,6 +5,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JwtGeneratorDialogComponent } from './jwt-generator-dialog.component';
 import { AuthTokenService } from '../../services/auth-token.service';
 import { NotificationService } from '../../services/notification.service';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('JwtGeneratorDialogComponent', () => {
   let component: JwtGeneratorDialogComponent;
@@ -19,12 +28,13 @@ describe('JwtGeneratorDialogComponent', () => {
     activeModalSpy = jasmine.createSpyObj('NgbActiveModal', ['close', 'dismiss']);
 
     await TestBed.configureTestingModule({
-      declarations: [JwtGeneratorDialogComponent],
+      declarations: [JwtGeneratorDialogComponent, MockTranslatePipe],
       imports: [FormsModule],
       providers: [
         { provide: AuthTokenService, useValue: authSpy },
         { provide: NotificationService, useValue: notificationSpy },
-        { provide: NgbActiveModal, useValue: activeModalSpy }
+        { provide: NgbActiveModal, useValue: activeModalSpy },
+        LanguageService
       ]
     }).compileComponents();
 
@@ -48,7 +58,10 @@ describe('JwtGeneratorDialogComponent', () => {
     await component.generate();
 
     expect(authSpy.generateAndStoreToken).toHaveBeenCalledWith('my-secret');
-    expect(notificationSpy.success).toHaveBeenCalled();
+    expect(notificationSpy.success).toHaveBeenCalledWith(
+      component.languageService.t('notification.jwtGeneratedTitle'),
+      component.languageService.t('notification.jwtGeneratedBody')
+    );
     expect(activeModalSpy.close).toHaveBeenCalled();
   });
 
@@ -59,7 +72,7 @@ describe('JwtGeneratorDialogComponent', () => {
     await component.generate();
 
     expect(notificationSpy.error).toHaveBeenCalledWith(
-      'JWT generation failed',
+      component.languageService.t('notification.jwtFailedTitle'),
       'JWT failed'
     );
   });

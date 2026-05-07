@@ -1,6 +1,6 @@
 <section
   class="chat-panel"
-  aria-label="Chat conversation history"
+  [attr.aria-label]="'chat.ariaHistory' | t"
   (mouseenter)="hovered = true"
   (mouseleave)="hovered = false">
 
@@ -9,8 +9,8 @@
       type="button"
       class="btn btn-sm btn-light icon-btn"
       (click)="copyRequested()"
-      aria-label="Copy chat history"
-      title="Copy chat history">
+      [attr.aria-label]="'chat.copyHistory' | t"
+      [title]="'chat.copyHistory' | t">
       <i class="fa-regular fa-copy" aria-hidden="true"></i>
     </button>
 
@@ -18,8 +18,8 @@
       type="button"
       class="btn btn-sm btn-light icon-btn"
       (click)="clearRequested()"
-      aria-label="Clear chat history"
-      title="Clear chat history">
+      [attr.aria-label]="'chat.clearHistory' | t"
+      [title]="'chat.clearHistory' | t">
       <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
     </button>
   </div>
@@ -33,7 +33,7 @@
 
       <article
         class="message-bubble"
-        [attr.aria-label]="message.role === 'user' ? 'User message' : 'Assistant message'">
+        [attr.aria-label]="message.role === 'user' ? ('chat.userMessage' | t) : ('chat.assistantMessage' | t)">
         <div class="message-header">
           <div class="message-role-wrap">
             <i
@@ -42,7 +42,7 @@
               [class.fa-robot]="message.role === 'assistant'"
               aria-hidden="true"></i>
             <div class="message-role">
-              {{ message.role === 'user' ? 'You' : 'Assistant' }}
+              {{ message.role === 'user' ? ('chat.user' | t) : ('chat.assistant' | t) }}
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@
         <div
           *ngIf="message.role === 'assistant' && message.pending"
           class="typing-indicator"
-          aria-label="Assistant is typing"
+          [attr.aria-label]="'chat.typing' | t"
           role="status">
           <span></span><span></span><span></span>
         </div>

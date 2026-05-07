@@ -7,6 +7,15 @@ import { ChatStateService } from '../../services/chat-state.service';
 import { ApiService } from '../../services/api.service';
 import { NotificationService } from '../../services/notification.service';
 import { AuthTokenService } from '../../services/auth-token.service';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 @Component({
   selector: 'app-feature-sidebar',
@@ -52,7 +61,7 @@ describe('ChatbotShellComponent', () => {
   beforeEach(async () => {
     chatStateSpy = jasmine.createSpyObj(
       'ChatStateService',
-      ['addMessage', 'updateMessage', 'clear', 'toBackendMessages'],
+      ['addMessage', 'updateMessage', 'clear', 'toBackendMessages', 'setStreamingEnabled'],
       {
         messages$: of([]),
         messages: [],
@@ -65,12 +74,13 @@ describe('ChatbotShellComponent', () => {
     authSpy = jasmine.createSpyObj('AuthTokenService', ['refreshTokenIfPossible']);
 
     chatStateSpy.toBackendMessages.and.returnValue([{ role: 'user', content: 'Hello' }]);
-    chatStateSpy.addMessage.and.callFake((role: any, content: any, pending?: any) => ({
+    chatStateSpy.addMessage.and.callFake((role: any, content: any, pending?: any, extras?: any) => ({
       id: `${role}-${content || 'empty'}-${pending ? 'pending' : 'final'}`,
       role,
       content,
       timestamp: Date.now(),
-      pending
+      pending,
+      ...(extras || {})
     }));
 
     authSpy.refreshTokenIfPossible.and.resolveTo(null);
@@ -81,13 +91,15 @@ describe('ChatbotShellComponent', () => {
         MockFeatureSidebarComponent,
         MockChatHistoryComponent,
         MockChatInputComponent,
-        MockToastHostComponent
+        MockToastHostComponent,
+        MockTranslatePipe
       ],
       providers: [
         { provide: ChatStateService, useValue: chatStateSpy },
         { provide: ApiService, useValue: apiSpy },
         { provide: NotificationService, useValue: notificationSpy },
-        { provide: AuthTokenService, useValue: authSpy }
+        { provide: AuthTokenService, useValue: authSpy },
+        LanguageService
       ]
     }).compileComponents();
 
@@ -122,9 +134,14 @@ describe('ChatbotShellComponent', () => {
     await component.onSendMessage('Hello');
 
     expect(notificationSpy.error).toHaveBeenCalledWith(
-      'Chat request failed',
+      component.languageService.t('notification.chatRequestFailedTitle'),
       'Chat failed'
     );
+
+    expect(chatStateSpy.updateMessage).toHaveBeenCalledWith(jasmine.any(String), {
+      content: component.languageService.t('error.chatProcessing'),
+      pending: false
+    });
   });
 
   it('should clear chat and notify', () => {
@@ -132,8 +149,8 @@ describe('ChatbotShellComponent', () => {
 
     expect(chatStateSpy.clear).toHaveBeenCalled();
     expect(notificationSpy.info).toHaveBeenCalledWith(
-      'Chat cleared',
-      'The chat history has been removed.'
+      component.languageService.t('notification.chatClearedTitle'),
+      component.languageService.t('notification.chatClearedBody')
     );
   });
 
@@ -146,5 +163,52 @@ describe('ChatbotShellComponent', () => {
     component.mobileSidebarOpen = true;
     component.closeMobileSidebar();
     expect(component.mobileSidebarOpen).toBeFalse();
+  });
+
+  it('should add a default greeting flagged as default when chat is empty', () => {
+    chatStateSpy.messages.splice(0, chatStateSpy.messages.length);
+    component['ensureDefaultGreeting']();
+
+    expect(chatStateSpy.addMessage).toHaveBeenCalledWith(
+      'assistant',
+      component.languageService.t('chat.defaultGreeting'),
+      false,
+      { isDefaultGreeting: true }
+    );
+  });
+
+  it('should detect only default greeting by flag instead of content', () => {
+    chatStateSpy.messages.splice(0, chatStateSpy.messages.length);
+    chatStateSpy.messages.push({
+        id: 'greeting-1',
+        role: 'assistant',
+        content: 'Anything at all',
+        timestamp: Date.now(),
+        isDefaultGreeting: true
+      });
+
+    expect(component['isOnlyDefaultGreetingPresent']()).toBeTrue();
+  });
+
+  it('should refresh flagged default greeting when language changes', async () => {
+    chatStateSpy.messages.splice(0, chatStateSpy.messages.length);
+    chatStateSpy.messages.push({
+        id: 'greeting-1',
+        role: 'assistant',
+        content: 'Hello. How can I help you today?',
+        timestamp: Date.now(),
+        isDefaultGreeting: true
+      });
+
+    spyOn(component.languageService, 'setLanguage').and.resolveTo();
+
+    component.setLanguage('fr');
+    await Promise.resolve();
+
+    expect(component.languageService.setLanguage).toHaveBeenCalledWith('fr');
+    expect(chatStateSpy.updateMessage).toHaveBeenCalledWith('greeting-1', {
+      content: component.languageService.t('chat.defaultGreeting'),
+      isDefaultGreeting: true
+    });
   });
 });

@@ -2,6 +2,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { FeatureSidebarComponent } from './feature-sidebar.component';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('FeatureSidebarComponent', () => {
   let component: FeatureSidebarComponent;
@@ -12,8 +21,8 @@ describe('FeatureSidebarComponent', () => {
     modalSpy = jasmine.createSpyObj('NgbModal', ['open']);
 
     await TestBed.configureTestingModule({
-      declarations: [FeatureSidebarComponent],
-      providers: [{ provide: NgbModal, useValue: modalSpy }]
+      declarations: [FeatureSidebarComponent, MockTranslatePipe],
+      providers: [{ provide: NgbModal, useValue: modalSpy }, LanguageService]
     }).compileComponents();
 
     fixture = TestBed.createComponent(FeatureSidebarComponent);
@@ -37,11 +46,11 @@ describe('FeatureSidebarComponent', () => {
     fixture.detectChanges();
 
     const text = (fixture.nativeElement as HTMLElement).textContent || '';
-    expect(text.indexOf('RAG Query')).toBeLessThan(text.indexOf('Summary Generator'));
-    expect(text.indexOf('Summary Generator')).toBeLessThan(text.indexOf('Citation Generator'));
-    expect(text.indexOf('Citation Generator')).toBeLessThan(text.indexOf('Upload to Vector Database'));
-    expect(text.indexOf('Upload to Vector Database')).toBeLessThan(text.indexOf('JWT Generator'));
-    expect(text.indexOf('JWT Generator')).toBeLessThan(text.indexOf('Settings'));
+    expect(text.indexOf('sidebar.rag')).toBeLessThan(text.indexOf('sidebar.summary'));
+    expect(text.indexOf('sidebar.summary')).toBeLessThan(text.indexOf('sidebar.citation'));
+    expect(text.indexOf('sidebar.citation')).toBeLessThan(text.indexOf('sidebar.upload'));
+    expect(text.indexOf('sidebar.upload')).toBeLessThan(text.indexOf('sidebar.jwt'));
+    expect(text.indexOf('sidebar.jwt')).toBeLessThan(text.indexOf('sidebar.settings'));
   });
 
   it('should show labels in mobile mode', () => {
@@ -49,7 +58,7 @@ describe('FeatureSidebarComponent', () => {
     fixture.detectChanges();
 
     const text = (fixture.nativeElement as HTMLElement).textContent || '';
-    expect(text).toContain('RAG Query');
-    expect(text).toContain('Settings');
+    expect(text).toContain('sidebar.rag');
+    expect(text).toContain('sidebar.settings');
   });
 });

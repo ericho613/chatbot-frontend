@@ -74,6 +74,24 @@
   width: 98%;
 }
 
+.language-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.language-label {
+  font-size: 0.875rem;
+  color: #495057;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.language-selector .form-select {
+  min-width: 120px;
+}
+
 @media (max-width: 991.98px) {
   .desktop-sidebar {
     display: none;
@@ -133,6 +151,16 @@
 }
 
 @media (max-width: 575.98px) {
+  .chatbot-header-row {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .language-selector {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
   .chatbot-main {
     padding: 0.75rem;
   }

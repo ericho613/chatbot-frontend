@@ -8,15 +8,15 @@
       [(ngModel)]="text"
       (input)="onInput()"
       (keydown)="onKeydown($event)"
-      placeholder="Ask a question or enter a response."
-      aria-label="Chat message input"></textarea>
+      [placeholder]="'chat.inputPlaceholder' | t"
+      [attr.aria-label]="'chat.inputPlaceholder' | t"></textarea>
 
     <button
       type="button"
       class="send-icon-btn"
       (click)="submit()"
       [disabled]="!text.trim()"
-      aria-label="Send message">
+      [attr.aria-label]="'chat.sendMessage' | t">
       <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
     </button>
   </div>

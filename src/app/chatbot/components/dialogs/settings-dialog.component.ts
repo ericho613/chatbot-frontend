@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChatStateService } from '../../services/chat-state.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-settings-dialog',
@@ -11,7 +12,8 @@ import { ChatStateService } from '../../services/chat-state.service';
 export class SettingsDialogComponent {
   constructor(
     public activeModal: NgbActiveModal,
-    public chatState: ChatStateService
+    public chatState: ChatStateService,
+    public languageService: LanguageService
   ) {}
 
   setStreaming(value: boolean): void {

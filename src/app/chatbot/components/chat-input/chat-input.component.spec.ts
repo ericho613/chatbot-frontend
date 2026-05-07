@@ -1,6 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { ChatInputComponent } from './chat-input.component';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('ChatInputComponent', () => {
   let component: ChatInputComponent;
@@ -8,7 +17,8 @@ describe('ChatInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ChatInputComponent],
+      declarations: [ChatInputComponent, MockTranslatePipe],
+      providers: [LanguageService],
       imports: [FormsModule]
     }).compileComponents();
 

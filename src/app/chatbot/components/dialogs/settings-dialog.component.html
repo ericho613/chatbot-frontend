@@ -1,9 +1,9 @@
 <div class="modal-header app-modal-header">
-  <h2 class="modal-title h5" id="settingsDialogTitle">Settings</h2>
+  <h2 class="modal-title h5" id="settingsDialogTitle">{{ 'settings.title' | t }}</h2>
   <button
     type="button"
     class="dialog-close-btn"
-    aria-label="Close settings dialog"
+    [attr.aria-label]="'settings.close' | t"
     (click)="activeModal.dismiss()">
     <i class="fa-solid fa-xmark" aria-hidden="true"></i>
   </button>
@@ -13,9 +13,9 @@
   <div class="settings-section">
     <div class="setting-row">
       <div>
-        <label class="setting-label" for="streamToggleDialog">Streaming responses</label>
+        <label class="setting-label" for="streamToggleDialog">{{ 'settings.streaming' | t }}</label>
         <div class="setting-help text-muted">
-          Show assistant responses chunk by chunk as the server streams them.
+          {{ 'settings.streamingHelp' | t }}
         </div>
       </div>
 
@@ -25,7 +25,7 @@
           type="checkbox"
           [checked]="chatState.streamingEnabled"
           (change)="setStreaming(($event.target).checked)"
-          aria-label="Toggle streaming responses" />
+          [attr.aria-label]="'settings.toggleStreaming' | t" />
         <span class="slider" aria-hidden="true"></span>
       </label>
     </div>
@@ -33,5 +33,5 @@
 </div>
 
 <div class="modal-footer app-modal-footer">
-  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close()">Done</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close()">{{ 'dialog.done' | t }}</button>
 </div>

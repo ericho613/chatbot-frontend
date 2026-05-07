@@ -1,9 +1,9 @@
 <div class="modal-header app-modal-header">
-  <h2 class="modal-title h5" id="summaryDialogTitle">Summary Generator</h2>
+  <h2 class="modal-title h5" id="summaryDialogTitle">{{ 'summary.title' | t }}</h2>
   <button
     type="button"
     class="dialog-close-btn"
-    aria-label="Close summary dialog"
+    [attr.aria-label]="'summary.close' | t"
     (click)="activeModal.dismiss()">
     <i class="fa-solid fa-xmark" aria-hidden="true"></i>
   </button>
@@ -11,14 +11,14 @@
 
 <div class="modal-body app-modal-body" aria-labelledby="summaryDialogTitle">
   <p class="text-muted mb-4">
-    Select a PDF file and choose the summary language. The generated summary will be added to the chat history.
+    {{ 'summary.description' | t }}
   </p>
 
   <div class="form-group dialog-field">
-    <label for="summaryLanguage" class="mb-2">Summary language</label>
+    <label for="summaryLanguage" class="mb-2">{{ 'summary.language' | t }}</label>
     <select id="summaryLanguage" class="form-control" [(ngModel)]="language">
       <option value="English">English</option>
-      <option value="French">French</option>
+      <option value="French">Français</option>
     </select>
   </div>
 
@@ -33,11 +33,11 @@
 
   <div *ngIf="loading" class="text-center mt-4" role="status" aria-live="polite">
     <div class="spinner-border text-primary" aria-hidden="true"></div>
-    <div class="mt-2">Processing request...</div>
+    <div class="mt-2">{{ 'dialog.processing' | t }}</div>
   </div>
 </div>
 
 <div class="modal-footer app-modal-footer">
-  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!selectedFiles.length || loading">Submit</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">{{ 'dialog.cancel' | t }}</button>
+  <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!selectedFiles.length || loading">{{ 'dialog.submit' | t }}</button>
 </div>

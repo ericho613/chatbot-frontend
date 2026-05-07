@@ -4,6 +4,7 @@ import { SelectedFileItem } from '../../models/chatbot.models';
 import { ApiService } from '../../services/api.service';
 import { ChatStateService } from '../../services/chat-state.service';
 import { NotificationService } from '../../services/notification.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-pdf-summary-dialog',
@@ -20,7 +21,8 @@ export class PdfSummaryDialogComponent {
     private api: ApiService,
     private chatState: ChatStateService,
     private notifications: NotificationService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    public languageService: LanguageService
   ) {}
 
   onFilesSelected(files: File[]): void {
@@ -74,11 +76,20 @@ export class PdfSummaryDialogComponent {
 
       this.activeModal.close();
     } catch (error: any) {
+      // this.chatState.updateMessage(assistantMessage.id, {
+      //   content: 'Sorry, an error occurred while generating the summary.',
+      //   pending: false
+      // });
+      // this.notifications.error('Summary generation failed', error?.message || 'Unable to summarize the PDF.');
+
       this.chatState.updateMessage(assistantMessage.id, {
-        content: 'Sorry, an error occurred while generating the summary.',
+        content: this.languageService.t('error.summary'),
         pending: false
       });
-      this.notifications.error('Summary generation failed', error?.message || 'Unable to summarize the PDF.');
+      this.notifications.error(
+        this.languageService.t('notification.summaryFailedTitle'),
+        error?.message || this.languageService.t('notification.summaryFailedBody')
+      );
     } finally {
       this.loading = false;
       this.changeDetector.detectChanges();

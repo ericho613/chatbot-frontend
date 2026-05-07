@@ -1,5 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FileDropzoneComponent } from './file-dropzone.component';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('FileDropzoneComponent', () => {
   let component: FileDropzoneComponent;
@@ -7,7 +16,8 @@ describe('FileDropzoneComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FileDropzoneComponent]
+      declarations: [FileDropzoneComponent, MockTranslatePipe],
+      providers: [LanguageService]
     }).compileComponents();
 
     fixture = TestBed.createComponent(FileDropzoneComponent);

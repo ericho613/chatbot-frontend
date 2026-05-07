@@ -2,6 +2,7 @@ import { AfterViewChecked, Component, ElementRef, Input, ViewChild } from '@angu
 import { ChatMessage } from '../../models/chatbot.models';
 import { MarkdownService } from '../../services/markdown.service';
 import { SafeHtml } from '@angular/platform-browser';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-chat-history',
@@ -21,7 +22,10 @@ export class ChatHistoryComponent implements AfterViewChecked {
   private isNearBottom = true;
   private lastMessagesCount = 0;
 
-  constructor(private markdown: MarkdownService) {}
+  constructor(
+    private markdown: MarkdownService,
+    public languageService: LanguageService
+  ) {}
 
   onScroll(): void {
     const element = this.scrollContainer.nativeElement;

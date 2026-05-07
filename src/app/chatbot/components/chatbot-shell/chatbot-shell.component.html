@@ -11,7 +11,7 @@
   </div>
 
   <div class="mobile-sidebar" [class.open]="mobileSidebarOpen" aria-label="Mobile feature sidebar">
-    <div class="mobile-sidebar-header">
+    <!-- <div class="mobile-sidebar-header">
       <h2 class="h6 mb-0">Tools</h2>
       <button
         type="button"
@@ -20,12 +20,24 @@
         aria-label="Close tools menu">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
+    </div> -->
+
+    <div class="mobile-sidebar-header">
+      <h2 class="h6 mb-0">{{ 'header.tools' | t }}</h2>
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        (click)="closeMobileSidebar()"
+        [attr.aria-label]="'header.closeTools' | t">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
     </div>
+
     <app-feature-sidebar [mobileMode]="true"></app-feature-sidebar>
   </div>
 
   <main class="chatbot-main">
-    <header class="chatbot-header">
+    <!-- <header class="chatbot-header">
       <div class="chatbot-header-row">
         <button
           type="button"
@@ -36,6 +48,35 @@
           <i class="fa-solid fa-bars" aria-hidden="true"></i>
           <span class="ms-2">Tools</span>
         </button>
+      </div>
+    </header> -->
+
+    <header class="chatbot-header">
+      <div class="chatbot-header-row">
+        <button
+          type="button"
+          class="btn btn-outline-primary mobile-tools-button"
+          (click)="openMobileSidebar()"
+          [title]="'header.openTools' | t"
+          [attr.aria-label]="'header.openTools' | t">
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          <span class="ms-2">{{ 'header.tools' | t }}</span>
+        </button>
+
+        <div class="language-selector">
+          <label for="languageSelect" class="language-label">
+            {{ 'header.language' | t }}
+          </label>
+          <select
+            id="languageSelect"
+            class="form-select form-select-sm"
+            [value]="languageService.currentLanguage"
+            (change)="setLanguage($any($event.target).value)"
+            aria-label="Application language">
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
       </div>
     </header>
 

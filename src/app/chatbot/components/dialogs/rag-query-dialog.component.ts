@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService } from '../../services/api.service';
 import { ChatStateService } from '../../services/chat-state.service';
 import { NotificationService } from '../../services/notification.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-rag-query-dialog',
@@ -18,7 +19,8 @@ export class RagQueryDialogComponent {
     private api: ApiService,
     private chatState: ChatStateService,
     private notifications: NotificationService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    public languageService: LanguageService
   ) {}
 
   async submit(): Promise<void> {
@@ -58,11 +60,20 @@ export class RagQueryDialogComponent {
 
       this.activeModal.close();
     } catch (error: any) {
+      // this.chatState.updateMessage(assistantMessage.id, {
+      //   content: 'Sorry, an error occurred while processing the RAG query.',
+      //   pending: false
+      // });
+      // this.notifications.error('RAG query failed', error?.message || 'Unable to process RAG query.');
+
       this.chatState.updateMessage(assistantMessage.id, {
-        content: 'Sorry, an error occurred while processing the RAG query.',
+        content: this.languageService.t('error.rag'),
         pending: false
       });
-      this.notifications.error('RAG query failed', error?.message || 'Unable to process RAG query.');
+      this.notifications.error(
+        this.languageService.t('notification.ragFailedTitle'),
+        error?.message || this.languageService.t('notification.ragFailedBody')
+      );
     } finally {
       this.loading = false;
       this.changeDetector.detectChanges();

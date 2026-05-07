@@ -1,7 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatHistoryComponent } from './chat-history.component';
 import { MarkdownService } from '../../services/markdown.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('ChatHistoryComponent', () => {
   let component: ChatHistoryComponent;
@@ -9,8 +17,8 @@ describe('ChatHistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ChatHistoryComponent],
-      providers: [MarkdownService, DomSanitizer]
+      declarations: [ChatHistoryComponent, MockTranslatePipe],
+      providers: [MarkdownService, LanguageService]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChatHistoryComponent);

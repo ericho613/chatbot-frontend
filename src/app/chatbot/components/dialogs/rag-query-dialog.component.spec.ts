@@ -6,6 +6,15 @@ import { RagQueryDialogComponent } from './rag-query-dialog.component';
 import { ApiService } from '../../services/api.service';
 import { ChatStateService } from '../../services/chat-state.service';
 import { NotificationService } from '../../services/notification.service';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('RagQueryDialogComponent', () => {
   let component: RagQueryDialogComponent;
@@ -37,13 +46,14 @@ describe('RagQueryDialogComponent', () => {
     });
 
     await TestBed.configureTestingModule({
-      declarations: [RagQueryDialogComponent],
+      declarations: [RagQueryDialogComponent, MockTranslatePipe],
       imports: [FormsModule],
       providers: [
         { provide: ApiService, useValue: apiSpy },
         { provide: ChatStateService, useValue: chatStateSpy },
         { provide: NotificationService, useValue: notificationSpy },
-        { provide: NgbActiveModal, useValue: activeModalSpy }
+        { provide: NgbActiveModal, useValue: activeModalSpy },
+        LanguageService
       ]
     }).compileComponents();
 
@@ -72,7 +82,7 @@ describe('RagQueryDialogComponent', () => {
     expect(chatStateSpy.addMessage).toHaveBeenCalledWith('assistant', '', true);
     expect(apiSpy.ragQuery).toHaveBeenCalled();
     expect(chatStateSpy.updateMessage).toHaveBeenCalledWith('assistant-1', {
-      content: 'Sorry, an error occurred while processing the RAG query.',
+      content: 'RAG answer',
       pending: false
     });
     expect(activeModalSpy.close).toHaveBeenCalled();
@@ -85,9 +95,15 @@ describe('RagQueryDialogComponent', () => {
     await component.submit();
 
     expect(notificationSpy.error).toHaveBeenCalledWith(
-      'RAG query failed',
+      component.languageService.t('notification.ragFailedTitle'),
       'Backend failed'
     );
+
+    expect(chatStateSpy.updateMessage).toHaveBeenCalledWith('assistant-1', {
+      content: component.languageService.t('error.rag'),
+      pending: false
+    });
+
     expect(component.loading).toBeFalse();
   });
 });

@@ -1,9 +1,9 @@
 <div class="modal-header app-modal-header">
-  <h2 class="modal-title h5" id="ragDialogTitle">RAG Query</h2>
+  <h2 class="modal-title h5" id="ragDialogTitle">{{ 'rag.title' | t }}</h2>
   <button
     type="button"
     class="dialog-close-btn"
-    aria-label="Close RAG Query dialog"
+    [attr.aria-label]="'rag.close' | t"
     (click)="activeModal.dismiss()">
     <i class="fa-solid fa-xmark" aria-hidden="true"></i>
   </button>
@@ -11,11 +11,11 @@
 
 <div class="modal-body app-modal-body" aria-labelledby="ragDialogTitle">
   <p class="text-muted mb-4">
-    Enter a question to query the vector database and generate an AI response based on retrieved document context.
+    {{ 'rag.description' | t }}
   </p>
 
   <div class="dialog-field">
-    <label for="ragQueryInput" class="mb-2">Query</label>
+    <label for="ragQueryInput" class="mb-2">{{ 'rag.query' | t }}</label>
     <textarea
       id="ragQueryInput"
       class="form-control"
@@ -24,17 +24,17 @@
       aria-describedby="ragHelp"></textarea>
 
     <small id="ragHelp" class="form-text text-muted mt-2">
-      The response will be added to the chat history as an assistant message.
+      {{ 'rag.help' | t }}
     </small>
   </div>
 
   <div *ngIf="loading" class="text-center mt-4" role="status" aria-live="polite">
     <div class="spinner-border text-primary" aria-hidden="true"></div>
-    <div class="mt-2">Processing request...</div>
+    <div class="mt-2">{{ 'dialog.processing' | t }}</div>
   </div>
 </div>
 
 <div class="modal-footer app-modal-footer">
-  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!query.trim() || loading">Submit</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">{{ 'dialog.cancel' | t }}</button>
+  <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!query.trim() || loading">{{ 'dialog.submit' | t }}</button>
 </div>

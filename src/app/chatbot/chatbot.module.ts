@@ -19,6 +19,7 @@ import { JwtGeneratorDialogComponent } from './components/dialogs/jwt-generator-
 import { FileDropzoneComponent } from './components/dialogs/file-dropzone.component';
 import { ToastHostComponent } from './components/toast-host/toast-host.component';
 import { SettingsDialogComponent } from './components/dialogs/settings-dialog.component';
+import { TranslatePipe } from './pipes/translate.pipe';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { SettingsDialogComponent } from './components/dialogs/settings-dialog.co
     JwtGeneratorDialogComponent,
     FileDropzoneComponent,
     ToastHostComponent,
-    SettingsDialogComponent
+    SettingsDialogComponent,
+    TranslatePipe
   ],
   imports: [
     CommonModule,

@@ -6,6 +6,15 @@ import { FileDropzoneComponent } from './file-dropzone.component';
 import { ApiService } from '../../services/api.service';
 import { ChatStateService } from '../../services/chat-state.service';
 import { NotificationService } from '../../services/notification.service';
+import { Pipe, PipeTransform } from '@angular/core';
+import { LanguageService } from '../../services/language.service';
+
+@Pipe({ name: 't' })
+class MockTranslatePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('PdfUploadDialogComponent', () => {
   let component: PdfUploadDialogComponent;
@@ -22,12 +31,13 @@ describe('PdfUploadDialogComponent', () => {
     activeModalSpy = jasmine.createSpyObj('NgbActiveModal', ['close', 'dismiss']);
 
     await TestBed.configureTestingModule({
-      declarations: [PdfUploadDialogComponent, FileDropzoneComponent],
+      declarations: [PdfUploadDialogComponent, FileDropzoneComponent, MockTranslatePipe],
       providers: [
         { provide: ApiService, useValue: apiSpy },
         { provide: ChatStateService, useValue: chatStateSpy },
         { provide: NotificationService, useValue: notificationSpy },
-        { provide: NgbActiveModal, useValue: activeModalSpy }
+        { provide: NgbActiveModal, useValue: activeModalSpy },
+        LanguageService
       ]
     }).compileComponents();
 
@@ -69,11 +79,11 @@ describe('PdfUploadDialogComponent', () => {
 
     expect(chatStateSpy.addMessage).toHaveBeenCalledWith(
       'assistant',
-      'Sorry, an error occurred while uploading or indexing the PDF file(s).'
+      component.languageService.t('error.upload')
     );
 
     expect(notificationSpy.error).toHaveBeenCalledWith(
-      'PDF upload failed',
+      component.languageService.t('notification.uploadFailedTitle'),
       'Upload failed'
     );
   });

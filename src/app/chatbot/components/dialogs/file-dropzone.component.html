@@ -6,12 +6,12 @@
   (drop)="onDrop($event)"
   role="button"
   tabindex="0"
-  aria-label="Upload PDF files by browsing or dragging and dropping">
-  <p class="mb-2"><strong>Drag and drop PDF file{{ multiple ? 's' : '' }}</strong> here</p>
-  <p class="text-muted mb-3">or browse your computer</p>
+  [attr.aria-label]="'dropzone.aria' | t">
+  <p class="mb-2"><strong>{{ multiple ? ('dropzone.dragDropMultiple' | t) : ('dropzone.dragDropSingle' | t) }}</strong></p>
+  <p class="text-muted mb-3">{{ 'dropzone.orBrowse' | t }}</p>
 
   <label class="btn btn-outline-primary mb-0">
-    Browse files
+    {{ 'dropzone.browse' | t }}
     <input
       type="file"
       accept=".pdf,application/pdf"
@@ -31,8 +31,8 @@
       type="button"
       class="btn btn-sm btn-outline-danger"
       (click)="remove(i)"
-      [attr.aria-label]="'Remove file ' + item.name">
-      Remove
+      [attr.aria-label]="('dropzone.remove' | t) + ' ' + item.name">
+      {{ 'dropzone.remove' | t }}
     </button>
   </div>
 </div>

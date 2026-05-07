@@ -4,6 +4,7 @@ import { SelectedFileItem } from '../../models/chatbot.models';
 import { ApiService } from '../../services/api.service';
 import { ChatStateService } from '../../services/chat-state.service';
 import { NotificationService } from '../../services/notification.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-pdf-citation-dialog',
@@ -20,7 +21,8 @@ export class PdfCitationDialogComponent {
     private api: ApiService,
     private chatState: ChatStateService,
     private notifications: NotificationService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    public languageService: LanguageService
   ) {}
 
   onFilesSelected(files: File[]): void {
@@ -74,11 +76,20 @@ export class PdfCitationDialogComponent {
 
       this.activeModal.close();
     } catch (error: any) {
+      // this.chatState.updateMessage(assistantMessage.id, {
+      //   content: 'Sorry, an error occurred while generating the citation.',
+      //   pending: false
+      // });
+      // this.notifications.error('Citation generation failed', error?.message || 'Unable to generate the citation.');
+
       this.chatState.updateMessage(assistantMessage.id, {
-        content: 'Sorry, an error occurred while generating the citation.',
+        content: this.languageService.t('error.citation'),
         pending: false
       });
-      this.notifications.error('Citation generation failed', error?.message || 'Unable to generate the citation.');
+      this.notifications.error(
+        this.languageService.t('notification.citationFailedTitle'),
+        error?.message || this.languageService.t('notification.citationFailedBody')
+      );
     } finally {
       this.loading = false;
       this.changeDetector.detectChanges();

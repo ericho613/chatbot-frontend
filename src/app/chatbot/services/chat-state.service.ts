@@ -22,13 +22,19 @@ export class ChatStateService {
     this._streamingEnabled.next(value);
   }
 
-  addMessage(role: 'user' | 'assistant' | 'system', content: string, pending = false): ChatMessage {
+  addMessage(
+    role: 'user' | 'assistant' | 'system',
+    content: string,
+    pending = false,
+    extras: Partial<ChatMessage> = {}
+  ): ChatMessage {
     const message: ChatMessage = {
       id: this.generateId(),
       role,
       content,
       timestamp: Date.now(),
-      pending
+      pending,
+      ...extras
     };
 
     this._messages.next([...this._messages.value, message]);

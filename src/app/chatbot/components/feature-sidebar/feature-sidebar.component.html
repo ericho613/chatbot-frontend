@@ -2,16 +2,16 @@
   class="sidebar"
   [class.collapsed]="!expanded && !mobileMode"
   [class.mobile-mode]="mobileMode"
-  aria-label="Application features sidebar">
+  [attr.aria-label]="'sidebar.aria' | t">
 
   <div class="sidebar-header" *ngIf="!mobileMode">
     <button
       type="button"
       class="btn btn-link sidebar-toggle"
-      [title]="expanded ? 'Hide tools' : 'Show tools'"
+      [title]="expanded ? ('sidebar.hideTools' | t) : ('sidebar.showTools' | t)"
       (click)="toggleSidebar()"
       [attr.aria-expanded]="expanded"
-      [attr.aria-label]="expanded ? 'Collapse feature sidebar' : 'Expand feature sidebar'">
+      [attr.aria-label]="expanded ? ('sidebar.collapse' | t) : ('sidebar.expand' | t)">
       <i
         class="fa-solid"
         [class.fa-angles-right]="!expanded"
@@ -19,38 +19,38 @@
         aria-hidden="true"></i>
     </button>
 
-    <span class="sidebar-title" *ngIf="expanded">Tools</span>
+    <span class="sidebar-title" *ngIf="expanded">{{ 'sidebar.title' | t }}</span>
   </div>
 
-  <nav class="feature-nav" aria-label="Feature navigation">
-    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openRag()" aria-label="Open RAG Query dialog">
+  <nav class="feature-nav" [attr.aria-label]="'sidebar.navAria' | t">
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openRag()" [attr.aria-label]="'sidebar.openRag' | t">
       <i class="fa-solid fa-database feature-item-icon" aria-hidden="true"></i>
-      <span class="feature-label">RAG Query</span>
+      <span class="feature-label">{{ 'sidebar.rag' | t }}</span>
     </button>
 
-    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openSummary()" aria-label="Open Summary Generator dialog">
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openSummary()" [attr.aria-label]="'sidebar.openSummary' | t">
       <i class="fa-solid fa-file-lines feature-item-icon" aria-hidden="true"></i>
-      <span class="feature-label">Summary Generator</span>
+      <span class="feature-label">{{ 'sidebar.summary' | t }}</span>
     </button>
 
-    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openCitation()" aria-label="Open Citation Generator dialog">
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openCitation()" [attr.aria-label]="'sidebar.openCitation' | t">
       <i class="fa-solid fa-quote-left feature-item-icon" aria-hidden="true"></i>
-      <span class="feature-label">Citation Generator</span>
+      <span class="feature-label">{{ 'sidebar.citation' | t }}</span>
     </button>
 
-    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openUpload()" aria-label="Open Upload to Vector Database dialog">
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openUpload()" [attr.aria-label]="'sidebar.openUpload' | t">
       <i class="fa-solid fa-cloud-arrow-up feature-item-icon" aria-hidden="true"></i>
-      <span class="feature-label">Upload to Vector Database</span>
+      <span class="feature-label">{{ 'sidebar.upload' | t }}</span>
     </button>
 
-    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openJwt()" aria-label="Open JWT Generator dialog">
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openJwt()" [attr.aria-label]="'sidebar.openJwt' | t">
       <i class="fa-solid fa-key feature-item-icon" aria-hidden="true"></i>
-      <span class="feature-label">JWT Generator</span>
+      <span class="feature-label">{{ 'sidebar.jwt' | t }}</span>
     </button>
 
-    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openSettings()" aria-label="Open Settings dialog">
+    <button *ngIf="showLabels" type="button" class="feature-item" (click)="openSettings()" [attr.aria-label]="'sidebar.openSettings' | t">
       <i class="fa-solid fa-gear feature-item-icon" aria-hidden="true"></i>
-      <span class="feature-label">Settings</span>
+      <span class="feature-label">{{ 'sidebar.settings' | t }}</span>
     </button>
   </nav>
 </aside>

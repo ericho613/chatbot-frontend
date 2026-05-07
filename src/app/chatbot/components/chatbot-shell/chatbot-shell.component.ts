@@ -6,6 +6,7 @@ import { AuthTokenService } from '../../services/auth-token.service';
 import { ChatMessage, GenerationConfig } from '../../models/chatbot.models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef, inject } from '@angular/core';
+import { LanguageService, AppLanguage } from '../../services/language.service';
 
 @Component({
   selector: 'app-chatbot-shell',
@@ -31,41 +32,26 @@ export class ChatbotShellComponent implements OnInit {
     private api: ApiService,
     private notifications: NotificationService,
     private authTokenService: AuthTokenService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    public languageService: LanguageService
   ) {}
 
-  // ngOnInit(): void {
-    
-
-  //   this.chatState.streamingEnabled$
-  //     .pipe(takeUntilDestroyed(this.destroyRef))
-  //     .subscribe(enabled => this.streamingEnabled = enabled);
-  // }
-
   ngOnInit(): void {
-
     this.chatState.messages$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(messages => {
         this.messages = messages;
         this.changeDetector.detectChanges();
+
         if (!messages.length) {
           this.ensureDefaultGreeting();
         }
       });
 
-    // this.chatState.messages$.subscribe(messages => {
-    //   this.messages = messages;
-    //   if (!messages.length) {
-    //     this.ensureDefaultGreeting();
-    //   }
-    // });
-
     this.chatState.streamingEnabled$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(enabled => this.streamingEnabled = enabled);
 
-    // this.chatState.streamingEnabled$.subscribe(enabled => this.streamingEnabled = enabled);
     this.authTokenService.refreshTokenIfPossible().catch(() => undefined);
 
     if (!this.chatState.messages.length) {
@@ -113,17 +99,23 @@ export class ChatbotShellComponent implements OnInit {
       }
     } catch (error: any) {
       this.chatState.updateMessage(assistantMessage.id, {
-        content: 'Sorry, an error occurred while processing your request.',
+        content: this.languageService.t('error.chatProcessing'),
         pending: false
       });
-      this.notifications.error('Chat request failed', error?.message || 'Unable to contact the server.');
+      this.notifications.error(
+        this.languageService.t('notification.chatRequestFailedTitle'),
+        error?.message || this.languageService.t('notification.chatRequestFailedBody')
+      );
     }
   }
 
   clearChat(): void {
     this.chatState.clear();
     this.ensureDefaultGreeting();
-    this.notifications.info('Chat cleared', 'The chat history has been removed.');
+    this.notifications.info(
+      this.languageService.t('notification.chatClearedTitle'),
+      this.languageService.t('notification.chatClearedBody')
+    );
   }
 
   setStreaming(value: boolean): void {
@@ -140,13 +132,23 @@ export class ChatbotShellComponent implements OnInit {
 
     try {
       if (typeof navigator === 'undefined' || !navigator.clipboard) {
-        this.notifications.error('Copy failed', 'Clipboard is not available in this environment.');
+        this.notifications.error(
+          this.languageService.t('notification.copyFailedTitle'),
+          this.languageService.t('notification.copyFailedClipboardUnavailable')
+        );
         return;
       }
+
       await navigator.clipboard.writeText(markdown);
-      this.notifications.success('Chat copied', 'The chat history was copied to the clipboard in markdown format.');
+      this.notifications.success(
+        this.languageService.t('notification.chatCopiedTitle'),
+        this.languageService.t('notification.chatCopiedBody')
+      );
     } catch {
-      this.notifications.error('Copy failed', 'Unable to copy the chat history to the clipboard.');
+      this.notifications.error(
+        this.languageService.t('notification.copyFailedTitle'),
+        this.languageService.t('notification.copyFailedBody')
+      );
     }
   }
 
@@ -158,19 +160,47 @@ export class ChatbotShellComponent implements OnInit {
     this.mobileSidebarOpen = false;
   }
 
+  setLanguage(language: string): void {
+    if (language === 'fr' || language === 'en') {
+      this.languageService.setLanguage(language as AppLanguage).then(() => {
+        this.refreshDefaultGreetingIfNeeded();
+      });
+    }
+  }
+
   private getMessageById(id: string): ChatMessage | undefined {
     return this.chatState.messages.find(m => m.id === id);
   }
 
   private ensureDefaultGreeting(): void {
     if (!this.chatState.messages.length) {
-      this.chatState.addMessage('assistant', 'Hello. How can I help you today?');
+      this.chatState.addMessage(
+        'assistant',
+        this.languageService.t('chat.defaultGreeting'),
+        false,
+        { isDefaultGreeting: true }
+      );
     }
   }
 
   private isOnlyDefaultGreetingPresent(): boolean {
     return this.chatState.messages.length === 1
       && this.chatState.messages[0].role === 'assistant'
-      && this.chatState.messages[0].content === 'Hello. How can I help you today?';
+      && this.chatState.messages[0].isDefaultGreeting === true;
+  }
+
+  private refreshDefaultGreetingIfNeeded(): void {
+    if (!this.chatState.messages.length) {
+      this.ensureDefaultGreeting();
+      return;
+    }
+
+    if (this.isOnlyDefaultGreetingPresent()) {
+      const greetingMessage = this.chatState.messages[0];
+      this.chatState.updateMessage(greetingMessage.id, {
+        content: this.languageService.t('chat.defaultGreeting'),
+        isDefaultGreeting: true
+      });
+    }
   }
 }
