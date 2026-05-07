@@ -1,19 +1,19 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
 import createDOMPurify, { DOMPurify } from 'dompurify';
+
+marked.setOptions({
+  gfm: true,
+  breaks: true
+});
 
 @Injectable({ providedIn: 'root' })
 export class MarkdownService {
   private readonly isBrowser: boolean;
   private purifier: DOMPurify | null = null;
-  private serverPurifierLoading: Promise<void> | null = null;
 
-  constructor(
-    private sanitizer: DomSanitizer,
-    @Inject(PLATFORM_ID) platformId: object
-  ) {
+  constructor(@Inject(PLATFORM_ID) platformId: object) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     marked.setOptions({
@@ -21,48 +21,25 @@ export class MarkdownService {
       breaks: true
     });
 
-    if (this.isBrowser) {
-      this.initializeBrowserPurifier();
-    } else {
-      this.initializeServerPurifierLazily();
+    if (this.isBrowser && typeof window !== 'undefined') {
+      this.purifier = createDOMPurify(window);
     }
   }
 
-  render(content: string): SafeHtml {
-    const rawHtml = marked.parse(content || '') as string;
+  render(content: string | null | undefined): string {
+    const markdown = content ?? '';
+    const rawHtml = marked.parse(markdown) as string;
 
     const sanitizedHtml = this.purifier
-      ? this.sanitizeWithPurifier(rawHtml)
-      : this.basicFallbackSanitize(rawHtml);
+      ? this.sanitizeWithDomPurify(rawHtml)
+      : this.sanitizeServerFallback(rawHtml);
 
-    const finalHtml = this.enforceSafeLinks(sanitizedHtml);
-    return this.sanitizer.bypassSecurityTrustHtml(finalHtml);
+    return this.enforceSafeLinks(sanitizedHtml);
   }
 
-  private initializeBrowserPurifier(): void {
-    if (typeof window === 'undefined') return;
-    this.purifier = createDOMPurify(window);
-  }
-
-  private initializeServerPurifierLazily(): void {
-    if (this.serverPurifierLoading) return;
-
-    this.serverPurifierLoading = this.loadServerPurifier().catch(() => {
-      this.purifier = null;
-    });
-  }
-
-  private async loadServerPurifier(): Promise<void> {
-    const jsdomModule = await import('jsdom');
-    const { JSDOM } = jsdomModule;
-
-    const windowLike: any = new JSDOM('').window as unknown as Window;
-    this.purifier = createDOMPurify(windowLike);
-  }
-
-  private sanitizeWithPurifier(html: string): string {
+  private sanitizeWithDomPurify(html: string): string {
     if (!this.purifier) {
-      return this.basicFallbackSanitize(html);
+      return this.sanitizeServerFallback(html);
     }
 
     return this.purifier.sanitize(html, {
@@ -77,14 +54,21 @@ export class MarkdownService {
     }) as string;
   }
 
-  private basicFallbackSanitize(html: string): string {
+  private sanitizeServerFallback(html: string): string {
     return html
       .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
       .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')
+      .replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, '')
+      .replace(/<object[\s\S]*?>[\s\S]*?<\/object>/gi, '')
+      .replace(/<embed[\s\S]*?>/gi, '')
+      .replace(/<form[\s\S]*?>[\s\S]*?<\/form>/gi, '')
       .replace(/\son\w+="[^"]*"/gi, '')
       .replace(/\son\w+='[^']*'/gi, '')
-      .replace(/\sjavascript:/gi, '')
-      .replace(/\sdata:/gi, '');
+      .replace(/\son\w+=\S+/gi, '')
+      .replace(/\sstyle=(["']).*?\1/gi, '')
+      .replace(/\sstyle=\S+/gi, '')
+      .replace(/\s(href|src)=(["'])\s*(javascript|data|vbscript):.*?\2/gi, '')
+      .replace(/\s(href|src)=\s*(javascript|data|vbscript):\S+/gi, '');
   }
 
   private enforceSafeLinks(html: string): string {
@@ -121,19 +105,19 @@ export class MarkdownService {
   }
 
   private enforceSafeLinksServer(html: string): string {
-    return html.replace(/<a\b([^>]*)>/gi, (fullMatch, attrs) => {
+    return html.replace(/<a\b([^>]*)>/gi, (_match, attrs) => {
       const hrefMatch = attrs.match(/\bhref=(["'])(.*?)\1/i);
       const href = hrefMatch?.[2] || '';
 
       let safeAttrs = attrs;
 
-      if (!this.isSafeHref(href)) {
-        safeAttrs = safeAttrs.replace(/\s*href=(["'])(.*?)\1/i, '');
-      }
-
       safeAttrs = safeAttrs
-        .replace(/\s*target=(["'])(.*?)\1/i, '')
-        .replace(/\s*rel=(["'])(.*?)\1/i, '');
+        .replace(/\s*target=(["'])(.*?)\1/gi, '')
+        .replace(/\s*rel=(["'])(.*?)\1/gi, '');
+
+      if (!this.isSafeHref(href)) {
+        safeAttrs = safeAttrs.replace(/\s*href=(["'])(.*?)\1/gi, '');
+      }
 
       if (this.isExternalHref(href) && this.isSafeHref(href)) {
         safeAttrs = `${safeAttrs} target="_blank" rel="noopener noreferrer"`;
@@ -144,7 +128,7 @@ export class MarkdownService {
   }
 
   private isSafeHref(href: string): boolean {
-    const normalized = (href || '').trim().toLowerCase();
+    const normalized = href.trim().toLowerCase();
 
     return (
       normalized.startsWith('http://') ||
@@ -156,7 +140,8 @@ export class MarkdownService {
   }
 
   private isExternalHref(href: string): boolean {
-    const normalized = (href || '').trim().toLowerCase();
+    const normalized = href.trim().toLowerCase();
+
     return (
       normalized.startsWith('http://') ||
       normalized.startsWith('https://') ||
