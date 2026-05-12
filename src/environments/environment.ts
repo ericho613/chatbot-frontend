@@ -2,6 +2,9 @@ export const environment = {
   production: false,
   apiBaseUrl: 'http://localhost:8000'
 
+  // The following should be used if you want the frontend and
+  // backend to run in the same Docker container
+  
   // Optionally, use the following if you want to use Angular dev proxy instead of hardcoding http://localhost:8000
   // See proxy.conf.json
   // Run "ng serve --proxy-config proxy.conf.json" to use proxy for local development
