@@ -1,11 +1,27 @@
-version: "3.9"
-
 services:
+
+  # The following should be used if you want the frontend and
+  # backend to run in the same Docker container
+  chatbot-backend:
+    build:
+      context: ../chatbot-backend
+      dockerfile: Dockerfile
+    container_name: chatbot-backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - ../chatbot-backend/.env
+    volumes:
+      - ../chatbot-backend/chroma_data:/app/chroma_data
+    restart: unless-stopped
+
   chatbot-frontend:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: chatbot-frontend
     ports:
-      - "4200:80"
+      - "127.0.0.1:4200:80"
+    depends_on:
+      - chatbot-backend
     restart: unless-stopped
