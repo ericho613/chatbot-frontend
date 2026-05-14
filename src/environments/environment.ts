@@ -3,7 +3,7 @@ export const environment = {
   apiBaseUrl: 'http://localhost:8000'
 
   // The following should be used if you want the frontend and
-  // backend to run in the same Docker container
+  // backend to run in the same Docker network
   
   // Optionally, use the following if you want to use Angular dev proxy instead of hardcoding http://localhost:8000
   // See proxy.conf.json

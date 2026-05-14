@@ -37,7 +37,7 @@ docker compose build --no-cache
 docker compose up -d
 ```
 
-**Note that you can run both the chatbot frontend application and the chatbot backend application in the same Docker container.  See docker-compose.yaml, nginx.conf, and environment.prod.ts.**
+**Note that you can run both the chatbot frontend application and the chatbot backend application in the same Docker network.  See docker-compose.yaml, nginx.conf, and environment.prod.ts.**
 
 To stop the Docker container and the running application, run the following command:
 

@@ -2,7 +2,7 @@ export const environment = {
   production: true,
 
   // The following should be used if you want the frontend and
-  // backend to run in the same Docker container
+  // backend to run in the same Docker network
 
   //   If you later put nginx or a reverse proxy in front of both frontend and backend apps, this might become:
   apiBaseUrl: '/api'

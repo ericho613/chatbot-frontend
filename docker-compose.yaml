@@ -1,7 +1,7 @@
 services:
 
   # The following should be used if you want the frontend and
-  # backend to run in the same Docker container
+  # backend to run in the same Docker network
   chatbot-backend:
     build:
       context: ../chatbot-backend
