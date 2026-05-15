@@ -6,19 +6,21 @@ import { RouterModule, Routes } from '@angular/router';
  * Redirect root path to the chatbot feature.
  */
 const routes: Routes = [
+  // {
+  //   path: '',
+  //   pathMatch: 'full',
+  //   redirectTo: 'chatbot'
+  // },
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'chatbot'
-  },
-  {
-    path: 'chatbot',
+    // path: 'chatbot',
     loadChildren: () =>
       import('./chatbot/chatbot.module').then(m => m.ChatbotModule)
   },
   {
     path: '**',
-    redirectTo: 'chatbot'
+    redirectTo: ''
   }
 ];
 
